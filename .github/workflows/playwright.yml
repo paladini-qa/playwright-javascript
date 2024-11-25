@@ -37,11 +37,56 @@ jobs:
       - name: Run Playwright Tests
         run: npx playwright test
 
-      # Upload test artifacts (report)
-      - name: Upload Playwright Report
+      # Upload test artifacts (Playwright Report)
+      - name: Upload Playwright Report Artifact
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+
+      # Option 1: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages
+        if: ${{ !cancelled() }}
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: playwright-report/
+
+      # Option 2: Post report as a comment in the Pull Request
+      - name: Post Playwright Report Comment
+        if: ${{ github.event_name == 'pull_request' && !cancelled() }}
+        run: |
+          echo "Playwright Test Report: [View Report](playwright-report/index.html)" > comment.md
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Playwright Test Report is available: 
+            [View Report](https://${{ github.repository_owner }}.github.io/${{ github.repository }}/)
+
+      # Option 3: Attach Playwright Report to GitHub Check
+      - name: Attach Playwright Report to Check
+        if: ${{ !cancelled() }}
+        run: |
+          echo "Playwright Test Report: [View Report](playwright-report/index.html)" > report.md
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('report.md', 'utf8');
+            github.rest.checks.create({
+              ...context.repo,
+              name: 'Playwright Test Report',
+              head_sha: context.sha,
+              status: 'completed',
+              conclusion: 'success',
+              output: {
+                title: 'Test Report',
+                summary: 'Playwright test results are available.',
+                text: report,
+              },
+            });
