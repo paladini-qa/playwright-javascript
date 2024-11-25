@@ -55,10 +55,13 @@ jobs:
           publish_dir: playwright-report/
 
       # Option 2: Post report as a comment in the Pull Request
-      - name: Post Playwright Report Comment
+      - name: Generate Comment File
         if: ${{ github.event_name == 'pull_request' && !cancelled() }}
         run: |
           echo "Playwright Test Report: [View Report](playwright-report/index.html)" > comment.md
+
+      - name: Post Playwright Report Comment
+        if: ${{ github.event_name == 'pull_request' && !cancelled() }}
         uses: peter-evans/create-or-update-comment@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
@@ -69,10 +72,13 @@ jobs:
             [View Report](https://${{ github.repository_owner }}.github.io/${{ github.repository }}/)
 
       # Option 3: Attach Playwright Report to GitHub Check
-      - name: Attach Playwright Report to Check
+      - name: Generate Report File
         if: ${{ !cancelled() }}
         run: |
           echo "Playwright Test Report: [View Report](playwright-report/index.html)" > report.md
+
+      - name: Attach Playwright Report to Check
+        if: ${{ !cancelled() }}
         uses: actions/github-script@v6
         with:
           script: |
