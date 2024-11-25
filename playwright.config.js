@@ -48,6 +48,10 @@ module.exports = defineConfig({
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
     },
+    {
+      name: 'iphone15',
+      use: { ...devices['iPhone 15'] },
+    }
 
     /* Test against mobile viewports. */
     // {
