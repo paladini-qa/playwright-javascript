@@ -1,0 +1,66 @@
+- **Execução de Todos os Testes**:
+    
+    ```bash
+    npx playwright test
+    
+    ```
+    
+- **Executar um Teste (Headless e Headed)**:
+    - Headless:
+        
+        ```bash
+        npx playwright test --headless
+        ```
+        
+    - Headed:
+        
+        ```bash
+        npx playwright test --headed
+        ```
+        
+- **Executar os Testes com a UI**:
+    
+    ```bash
+    npx playwright test --head
+    
+    ```
+    
+- **Executar os Testes em Modo Debug**:
+    
+    ```bash
+    npx playwright test --debug
+    
+    ```
+    
+- **CodeGen** – Geração de código:
+    
+    ```bash
+    npx playwright codeg
+    ```
+    
+- **Executar os Testes com um Navegador Específico**:
+    
+    ```bash
+    npx playwright test --browser=firefox
+    
+    ```
+    
+- **Mostrar Viewports**:
+    
+    ```jsx
+    await page.setViewportSize({ width: 1280, height: 720 });
+    
+    ```
+    
+- **Limitar as Instâncias no Paralelismo**:
+    
+    ```jsx
+    module.exports = {
+        projects: [
+            {
+                name: 'test',
+                workers: 2,
+            },
+        ],
+    }
+    ```
